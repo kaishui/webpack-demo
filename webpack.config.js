@@ -1,14 +1,19 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import webpack from 'webpack';
 
 
-module.exports = {
-     entry: './src/index.js',
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export let config = {
+     entry: 'src/server.js',
      output: {
           filename: '[name].bundle.js',
           path: path.resolve(__dirname, 'dist'),
-          publicPath: "/"
+          publicPath: "./dist"
      },
      devtool: 'inline-source-map',
      module: {
@@ -16,17 +21,24 @@ module.exports = {
                {
                     test: /\.css$/,
                     use: ['style-loader', 'css-loader']
+               },
+               {
+                    test: /\.js|\.ts?$/,
+                    exclude: "/node_modules",
+                    use: 'ts-loader'
                }
           ]
      },
-     devServer: {
-          contentBase: './dist',
-          hot: true
+
+     resolve: {
+          extensions: [".ts", ".js"]
      },
+     mode: "development",
      plugins: [
           new HtmlWebpackPlugin({
                title: 'Output Management'
           }),
-          new webpack.HotModuleReplacementPlugin()
+          new webpack.HotModuleReplacementPlugin(),
+          new webpack.ProgressPlugin()
      ],
 };
