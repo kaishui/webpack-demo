@@ -1,10 +1,17 @@
+# Set node env
+```
+https://nodejs.org/en/
+```
 # git clone 
+```
+git clone https://github.com/kaishui/webpack-demo.git
+```
 
 # cd $project
 
 # npm i
 
-# replease src/server.js
+# modify the excel dir on src/server.js
 ```
 readDirExcels("/software/workspace/excelToJson", res);
 ```
