@@ -1,4 +1,4 @@
-# Set node env
+# Set nodejs env
 ```
 https://nodejs.org/en/
 ```
