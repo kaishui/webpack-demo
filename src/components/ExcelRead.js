@@ -316,7 +316,7 @@ export let extractColumn = (result) => {
                     for (let j in tmp.name) {
                          let fieldKey = result[i][tmp.name[j]] ? result[i][tmp.name[j]] : tmp.name[j];
 
-                         target[fieldKey] = result[i][tmp.value[j]];
+                         target[fieldKey] = setVal(result[i][tmp.value[j]]);
                     }
                }
           }
