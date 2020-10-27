@@ -6,7 +6,9 @@ import _ from 'lodash';
 import json2xls from 'json2xls';
 
 let commonName = { A: '监测评价内容', B: '指标内容', D: '相对规范', E: '存在问题' };
-
+// columnTemplate json from a standard template
+// name: [], value:[] for defining what you want to extract that columns, name is column name, value is cell value
+// if contains D/E means want to extract that
 var columnTemplate = [
      { A: '报告（1）', name: [], value: [] },
      { A: '编号：20001', name: ['编号'], value: ["A"] },
@@ -274,16 +276,18 @@ export let setVal = (val) => {
 }
 
 export function readDirExcels(pathName, res) {
-
+     // list files
      fs.readdir(pathName, function (err, files) {
           let targetArr = new Array();
           // console.log(files);
+          //read file
           for (let index in files) {
                let filePath = pathName + "/" + files[index];
+               //excel convert to json
                let result = excelToJson({
                     source: fs.readFileSync(filePath)
                });
-
+               //extract columns
                Object.keys(result).forEach(resultKey => {
                     let keys = result[resultKey];
                     console.log(keys);
@@ -294,14 +298,15 @@ export function readDirExcels(pathName, res) {
           }
           // console.log(targetArr);
 
+          // json to excel
           var xls = json2xls(targetArr);
-
+          //output result file
           fs.writeFileSync('data.xlsx', xls, 'binary');
           res.send(targetArr);
      })
 }
 
-
+// compare with templateJson to construct expected json
 export let extractColumn = (result) => {
      console.log(result);
      let target = {};
@@ -327,7 +332,7 @@ export let extractColumn = (result) => {
                if (tmp.B) {
                     prefix = tmp['B'];
                }
-               // PREFIX + result[i][C] + commonName['D']
+               // PREFIX + tmp[C] + commonName['D']
                let firstColumnName = prefix + "-" + tmp['C'] + "-" + commonName['D'];
                let secondColumnName = prefix + "-" + tmp['C'] + "-" + commonName['E'];
                target[firstColumnName] = setVal(result[i]['D']);
