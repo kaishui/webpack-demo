@@ -279,40 +279,50 @@ export function readDirExcels(pathName, res) {
      // list files
      fs.readdir(pathName, function (err, files) {
           let targetArr = new Array();
-          // console.log(files);
+          let errorArr = new Array();
+
+          // //console.log(files);
           //read file
           for (let index in files) {
                let filePath = pathName + "/" + files[index];
-               //excel convert to json
-               let result = excelToJson({
-                    source: fs.readFileSync(filePath)
-               });
-               //extract columns
-               Object.keys(result).forEach(resultKey => {
-                    let keys = result[resultKey];
-                    console.log(keys);
-                    let target = extractColumn(keys);
+               try {
+                    //excel convert to json
+                    let result = excelToJson({
+                         source: fs.readFileSync(filePath)
+                    });
+                    //extract columns
+                    Object.keys(result).forEach(resultKey => {
+                         let keys = result[resultKey];
+                         //console.log(keys);
+                         let target = extractColumn(keys);
 
-                    targetArr.push(target);
-               });
+                         targetArr.push(target);
+                    });
+
+               } catch (e) {
+                    console.log(`read file: ${files[index]} exception`, e);
+                    errorArr.push(files[index]);
+               }
+
           }
-          // console.log(targetArr);
+          // //console.log(targetArr);
 
           // json to excel
           var xls = json2xls(targetArr);
           //output result file
           fs.writeFileSync('data.xlsx', xls, 'binary');
-          res.send(targetArr);
+          let resResult = _.isEmpty(errorArr)? "successful" : "exception files:" + errorArr.toString();
+          res.send(resResult);
      })
 }
 
 // compare with templateJson to construct expected json
 export let extractColumn = (result) => {
-     console.log(result);
+     //console.log(result);
      let target = {};
      let prefix = '';
      for (let i in columnTemplate) {
-          console.log("index: " + i);
+          //console.log("index: " + i);
           let tmp = columnTemplate[i];
           //contain name: [] , value: []
           if (tmp.name) {
@@ -333,12 +343,12 @@ export let extractColumn = (result) => {
                     prefix = tmp['B'];
                }
                // PREFIX + tmp[C] + commonName['D']
-               let firstColumnName = prefix + "-" + tmp['C'] + "-" + commonName['D'];
-               let secondColumnName = prefix + "-" + tmp['C'] + "-" + commonName['E'];
+               let firstColumnName = prefix + "-" + setVal(tmp['C']) + "-" + commonName['D'];
+               let secondColumnName = prefix + "-" + setVal(tmp['C']) + "-" + commonName['E'];
                target[firstColumnName] = setVal(result[i]['D']);
                target[secondColumnName] = setVal(result[i]['E']);
           }
      }
-     console.log(target);
+     //console.log(target);
      return target;
 }
