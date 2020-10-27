@@ -11,7 +11,7 @@ git clone https://github.com/kaishui/webpack-demo.git
 
 # npm i
 
-# modify the excel dir on src/server.js
+# modify the excel dir on src/index.js
 ```
 readDirExcels("/software/workspace/excelToJson", res);
 ```
